@@ -1,19 +1,25 @@
 //sockett 
 
 #include <stdio.h>
-#include <sys/types.h> // textbook
-#include <sys/socket.h> //textbook
-#include <netinet/in.h>
-#include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
 #define PORT 22110
 #define MAX_LENGTH 1024
+char messageBuffer[MAX_LENGTH]; // buffer to store the message data
 
 int main(int argCount,char* args[]){
 
     printf("Hello!\n");
-    printf("to connect do: netcat -u 127.0.0.1 %d\n, PORT");
+    printf("to connect do: netcat -u 127.0.0.1 %d\n", PORT);
+
 
 
     // setting up socket -- brian had //
@@ -29,10 +35,9 @@ int main(int argCount,char* args[]){
     int mysocket = socket(PF_INET, SOCK_DGRAM, 0); 
         //before was AF  instead PF -- domain = AF-> allows communication and binding so it can talk to another port
         // type = DGRAM -> connectionless socket,for UDP, no need to maintain open connection
-    
 
     // binding socket //
-    bind(mysocket, (struct sockaddr *)&server, sizeof(server) ); // opens socket
+    int bindval= bind(mysocket, (struct sockaddr *)&server, sizeof(server));
 
 
     while(1){
@@ -40,12 +45,11 @@ int main(int argCount,char* args[]){
     // recieve data// 
         struct sockaddr_in messageFrom; // lets us know who we got message from, brian had sinRemote
         unsigned int messageLen = sizeof(messageFrom); // the length
-        char messageBuffer[MAX_LENGTH]; // buffer to store the message data
-        int bytesOfMesssage = recvfrom(mysocket, messageBuffer, MAX_LENGTH, 0, (struct sockaddr *)&mysocket,messageLen); // main function to recieve
+        int bytesOfMesssage = recvfrom(mysocket, messageBuffer, MAX_LENGTH, 0, (struct sockaddr *)&messageFrom,&messageLen); // main function to recieve
 
         int interminateNull = (bytesOfMesssage < MAX_LENGTH) ? bytesOfMesssage : MAX_LENGTH -1; 
         messageBuffer[interminateNull] = 0; 
-        // printf("message recived successfully by: %d bytes: \n\n %s\n", bytesOfMesssage,messageBuffer);
+        printf("message recived successfully by: %d bytes: \n\n %s\n", bytesOfMesssage,messageBuffer);
         if(messageBuffer == NULL){
             printf("repeat-->  %s\n", messageBuffer);
         }
@@ -57,8 +61,6 @@ int main(int argCount,char* args[]){
     //close socket// 
 
     close(mysocket); 
-
-
 
     
 }
