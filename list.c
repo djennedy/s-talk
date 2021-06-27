@@ -477,6 +477,10 @@ typedef void (*FREE_FN)(void* pItem);
 void List_free(List* pList, FREE_FN pItemFreeFn)
 {
     assert(pList!=NULL);
+    if(pItemFreeFn==NULL)
+    {
+        return;
+    }
 
     if(!pList->isAvailable)
     {
@@ -530,6 +534,10 @@ typedef bool (*COMPARATOR_FN)(void* pItem, void* pComparisonArg);
 void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg)
 {
     assert(pList!=NULL);
+    if(pComparator==NULL)
+    {
+        return NULL;
+    }
     
     if(pList->numItems==0)
     {
