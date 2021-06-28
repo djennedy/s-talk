@@ -11,18 +11,25 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <pthread.h>
 
 #include "list.h"
 
-// Preparing variables we'll use
+//Preparing variables to use
 static int sockfd;
-static struct addrinfo hints, *servinfo, *p;
-static int gaiVal;
-static int numbytes;
-static char* message;
+static struct addrinfo *servinfo;
+static char* hostname;
+static char* port;
+static List* list;
+static pthread_t senderThread;
 
-static void senderLoop(char* hostname, char* port, List* list)
+static void* senderLoop(void* unused)
 {
+    struct addrinfo hints, *p;
+    int gaiVal;
+    int bindVal;
+    int numbytes;
+    char* message;
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
     hints.ai_family = AF_INET;
@@ -34,7 +41,7 @@ static void senderLoop(char* hostname, char* port, List* list)
     if (gaiVal != 0 )
     {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(gaiVal));
-        return;
+        return NULL;
     }
 
     // Initializing a socket and binding it to any port we find
@@ -55,7 +62,7 @@ static void senderLoop(char* hostname, char* port, List* list)
     if(p==NULL)
     {
         fprintf(stderr, "sender: failed to create socket");
-        return;
+        return NULL;
     }
 
     while(1)
@@ -73,20 +80,35 @@ static void senderLoop(char* hostname, char* port, List* list)
         if(numbytes ==-1)
         {
             perror("sender: sendto error");
-            return;
+            return NULL;
         }
-
     }
-
-    // Freeing our results from getaddrinfo
-    freeaddrinfo(servinfo);
+    return NULL;
 }
 
-void senderInit(char* hostname, char* port, List* list)
+void senderInit(char* hostnm, char* p, List* l)
 {
-    senderLoop(hostname, port, list);
+    hostname=hostnm;
+    port = p;
+    list = l;
+
+    int stval = pthread_create(&senderThread, NULL, senderLoop, NULL);
+    if(stval != 0)
+    {
+        perror("sender: thread creation error");
+        exit(-1);
+    }
+    
 }
 void senderShutdown()
 {
+
+    // Freeing our results from getaddrinfo
+    freeaddrinfo(servinfo);
+
+    // closing connection to the socket
     close(sockfd);
+
+    pthread_cancel(senderThread);
+    pthread_join(senderThread, NULL);
 }
