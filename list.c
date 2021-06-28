@@ -477,10 +477,6 @@ typedef void (*FREE_FN)(void* pItem);
 void List_free(List* pList, FREE_FN pItemFreeFn)
 {
     assert(pList!=NULL);
-    if(pItemFreeFn==NULL)
-    {
-        return;
-    }
 
     if(!pList->isAvailable)
     {
@@ -493,7 +489,10 @@ void List_free(List* pList, FREE_FN pItemFreeFn)
         Node* temp = pList->current;
         pList->current = pList->current->next;
 
-        (*pItemFreeFn)(temp->item);
+        if(pItemFreeFn!=NULL)
+        {
+            (*pItemFreeFn)(temp->item);
+        }
         pushNodeMem(temp);
     }
 
