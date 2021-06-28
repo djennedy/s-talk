@@ -3,7 +3,6 @@
 
 #include "list.h"
 
-void sendMessage(char* hostname, char* port, List* list);
 void senderInit(char* hostname, char* port, List* list);
 void senderShutdown();
 

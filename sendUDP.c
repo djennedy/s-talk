@@ -21,7 +21,7 @@ static int gaiVal;
 static int numbytes;
 static char* message;
 
-void sendMessage(char* hostname, char* port, List* list)
+static void senderLoop(char* hostname, char* port, List* list)
 {
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
@@ -84,7 +84,7 @@ void sendMessage(char* hostname, char* port, List* list)
 
 void senderInit(char* hostname, char* port, List* list)
 {
-    sendMessage(hostname, port, list);
+    senderLoop(hostname, port, list);
 }
 void senderShutdown()
 {
