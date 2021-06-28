@@ -92,8 +92,8 @@ void senderInit(char* hostnm, char* p, List* l)
     port = p;
     list = l;
 
-    int stval = pthread_create(&senderThread, NULL, senderLoop, NULL);
-    if(stval != 0)
+    int stVal = pthread_create(&senderThread, NULL, senderLoop, NULL);
+    if(stVal != 0)
     {
         perror("sender: thread creation error");
         exit(-1);
