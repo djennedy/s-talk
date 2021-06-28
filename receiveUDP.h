@@ -3,7 +3,7 @@
 
 #include "list.h"
 
-void receiverInit(char* hostname, char* port, List* list);
+void receiverInit(char* hostnm, char* p, List* l);
 void receiverShutdown();
 
 #endif

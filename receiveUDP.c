@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <pthread.h>
 
 #include "list.h"
 
@@ -19,18 +20,26 @@
 
 // Preparing variables we'll use
 static int sockfd;
-static struct addrinfo hints, *servinfo, *p;
-static int gaiVal;
-static int bindVal;
-static int numbytes;
-char buf[MAXBUFLEN];
-static struct sockaddr_in their_addr;
-static socklen_t addr_len;
-static char s[INET_ADDRSTRLEN];
-char* message;
+static struct addrinfo *servinfo;
+static char* message;
+static char* hostname;
+static char* port;
+static List* list;
+static pthread_t receiverThread;
 
-static void receiverLoop (char* hostname, char* port, List* list)
+static void* receiverLoop (void* unused)
 {
+    // Preparing variables we'll use
+    int sockfd;
+    struct addrinfo hints, *servinfo, *p;
+    int gaiVal;
+    int bindVal;
+    int numbytes;
+    char buf[MAXBUFLEN];
+    struct sockaddr_in their_addr;
+    socklen_t addr_len;
+    char s[INET_ADDRSTRLEN];
+
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
     hints.ai_family = AF_INET;
@@ -44,7 +53,7 @@ static void receiverLoop (char* hostname, char* port, List* list)
     if (gaiVal != 0 )
     {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(gaiVal));
-        return;
+        return NULL;
     }
 
     // Initializing a socket and binding it to any port we find
@@ -76,7 +85,7 @@ static void receiverLoop (char* hostname, char* port, List* list)
     if(p==NULL)
     {
         fprintf(stderr, "receiver: failed to bind socket");
-        return;
+        return NULL;
     }
 
     // Freeing our results from getaddrinfo
@@ -92,7 +101,7 @@ static void receiverLoop (char* hostname, char* port, List* list)
         if(numbytes ==-1)
         {
             perror("receiver: recvfrom error");
-            return;
+            return NULL;
         }
 
         buf[numbytes]='\0';
@@ -106,13 +115,30 @@ static void receiverLoop (char* hostname, char* port, List* list)
         // Adding message to the list, using prepend to implement FIFO
         List_prepend(list, message);
     }
+    return NULL;
 }
 
-void receiverInit(char* hostname, char* port, List* list)
+void receiverInit(char* hostnm, char* p, List* l)
 {
-    receiverLoop(hostname, port, list);
+    hostname = hostnm;
+    port = p;
+    list = l;
+
+    int rectVal = pthread_create(&receiverThread, NULL, receiverLoop, NULL);
+    if(rectVal != 0)
+    {
+        perror("sender: thread creation error");
+        exit(-1);
+    }
 }
 void receiverShutdown()
 {
+    // Freeing our results from getaddrinfo
+    freeaddrinfo(servinfo);
+
+    // closing connection to the socket
     close(sockfd);
+
+    pthread_cancel(receiverThread);
+    pthread_join(receiverThread, NULL);
 }
