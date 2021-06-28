@@ -29,9 +29,8 @@ static socklen_t addr_len;
 static char s[INET_ADDRSTRLEN];
 char* message;
 
-void receiverInit(char* hostname, char* port, List* list)
+static void receiverLoop (char* hostname, char* port, List* list)
 {
-
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
     hints.ai_family = AF_INET;
@@ -107,7 +106,11 @@ void receiverInit(char* hostname, char* port, List* list)
         // Adding message to the list, using prepend to implement FIFO
         List_prepend(list, message);
     }
+}
 
+void receiverInit(char* hostname, char* port, List* list)
+{
+    receiverLoop(hostname, port, list);
 }
 void receiverShutdown()
 {
