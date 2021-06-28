@@ -1,6 +1,5 @@
 //screen, 
-// reads off keyboard and adds to list
-
+//reads off keyboard and adds to list
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,36 +12,35 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <unistd.h>
+#include <pthread.h> 
 
 #include "list.h"
 #define MAXBUFLEN 65508
 
-void readKeyboardInit(char* hostname, char* port, List* list)
-{
-
-
-printf("Testing read!");
+static  pthread_t readThread;
 
 
 
-// said below was right idea..//
+void readTask(void* useless){
+    //read gets called  // done
+    //adds message to list // done
+    //notify sendUDP that read is done // use condition variable, pthreads
 
 
-char bufStorageOfMessage[MAXBUFLEN] = '\0'; 
-// bufStorageOfMessage = '\0';
-// char bufStorageOfMessage[MAXBUFLEN] ="Testing buffer readInput \0";  
-
-read(0,bufStorageOfMessage, MAXBUFLEN -1);
-    // first arg -> reads from file descriptor, not known so use 0
-    // second arg -> starts from the buff, place to store the input value
-    // third arg -> end the read at this value, max amount allowed
-// printf("This message was added to buffer ---> : %s\n", bufStorageOfMessage);
-List_perpend(list, bufStorageOfMessage);
+    // said below was right idea..//
+    char bufStorageOfMessage[MAXBUFLEN]; 
+    // bufStorageOfMessage = '\0';
+    read(0,bufStorageOfMessage, MAXBUFLEN -1);
+    List_perpend(list, bufStorageOfMessage);
+}
 
 
+void readInit(char* hostname, char* port, List* list){
 
-
+    int readingThread =  pthread_create(&readThread, NULL, readTask, NULL);
+    if(readingThread != 0){
+        perror("read thread failed");
+    }
 
 }
 
@@ -50,8 +48,6 @@ List_perpend(list, bufStorageOfMessage);
 
 int main(int argCount,char* args[]){
 
-    List* testingReadList = List_create(); 
-    readInit("127.0.0.1", "22110",testingReadList);
 
-    printf("testing 1,2,3");
+
 }

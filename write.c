@@ -1,5 +1,4 @@
 //keyboard,
-
 // take list message and write to screen
 
 #include <stdio.h>
@@ -13,56 +12,40 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#include <unistd.h>
-
 #include "list.h"
 #define MAXBUFLEN 65508
 
-void writeScreenInit(char* hostname, char* port, List* list)
-{
+static pthread_t writeThread;
+
+void writeTask(void* useless){
+    if(List_count(list) !=0){// while there are items on the list
+            printf("Testing writeScreen!");
+            int writeVar = write(1,List_trim(list), MAXBUFLEN ); // will put the message from first list onto screen
+
+            
+            if(writeVar == -1){
+                perror("Error: Unable to write to screen");
+
+            }
+        }
+}
 
 
-    printf("Testing write!");
-
-    // char bufStorageOfMessage[MAXBUFLEN] = '\0'; 
-    char bufWriteToScreen[MAXBUFLEN] = '\0'; // buffer to write to screen
-
-    // read(list,bufStorageOfMessage,MAXBUFLEN);
-    // List_search(bufStorageOfMessage);// find message in list
 
 
-    /*
-    List_first(list); // grabs the first message on the list
-    for(int i = 0; i< MAXBUFLEN; i++){ // iterates through
-        bufWriteToScreen = List_next(list);  // grabbing the message beside it as w
-        write(0,bufWriteToScreen, MAXBUFLEN ); // writes the message out to screen
+void writeInit(char* hostname, char* port, List* list){
+
+  int writingThread =  pthread_create(&writeThread, NULL, writeTask, NULL);
+    if(writingThread != 0){
+        perror("write thread failed");
     }
-    */
-
-
-    // bufWriteToScreen = List_first(list); // grabs the first message on the list
-    write(1,List_first(list), MAXBUFLEN ); // will put the message from first list onto screen
-    
-
-
-
-
-    //write(arg1, arg2, arg3,)//
-    //1st arg -> 1 bc unknown file descriptor
-    //2nd arg -> buffer you are going to write 
-    //3rd arg -> max number it will write til
-
-
-
 
 }
 
 
 
 int main(int argCount,char* args[]){
-
-    List* testingWriteList = List_create(); 
    
+    write(1,"Test", 4); // this works!
 
-    printf("testing 1,2,3");
 }
