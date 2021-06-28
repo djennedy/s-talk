@@ -39,7 +39,6 @@ void receiverInit(char* hostname, char* port, List* list)
     hints.ai_flags = AI_PASSIVE;
 
     //Getting address information with getaddrinfo
-    //You can replace the IP address with your hostname, this is how we'll do things in the assignment
     gaiVal = getaddrinfo(hostname, port, &hints, &servinfo);
 
     // Error checking for getaddrinfo
@@ -68,7 +67,7 @@ void receiverInit(char* hostname, char* port, List* list)
         if(bindVal ==-1)
         {
             close(sockfd);
-            perror("receiver: bind() error in receiver");
+            perror("receiver: bind() error");
             continue;
         }
         break;
