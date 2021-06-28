@@ -21,7 +21,7 @@ static int gaiVal;
 static int numbytes;
 static char* message;
 
-void senderInit(char* hostname, char* port, List* list)
+void sendMessage(char* hostname, char* port, List* list)
 {
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
@@ -66,6 +66,9 @@ void senderInit(char* hostname, char* port, List* list)
         // Sending
         numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
         
+        // De-allocating 
+        free(message);
+
         // Error checking recvfrom
         if(numbytes ==-1)
         {
@@ -73,11 +76,15 @@ void senderInit(char* hostname, char* port, List* list)
             return;
         }
 
-    
     }
 
     // Freeing our results from getaddrinfo
     freeaddrinfo(servinfo);
+}
+
+void senderInit(char* hostname, char* port, List* list)
+{
+    sendMessage(hostname, port, list);
 }
 void senderShutdown()
 {
