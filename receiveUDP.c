@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "queueOperations.h"
 #include "receiveUDP.h"
 
 // Max size of the message, theoretical max size of a UDP packet in IPv4.
@@ -111,8 +112,8 @@ static void* receiverLoop (void* unused)
         strncpy(message, buf, numbytes);
         message[numbytes] = '\0';
 
-        // Adding message to the list, using prepend to implement FIFO
-        List_prepend(list, message);
+        // Adding message to the list
+        enqueueMessage(list, message);
     }
     return NULL;
 }

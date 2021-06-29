@@ -6,6 +6,7 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "queueOperations.h"
 #include "readInput.h"
 
 #define MAXBUFLEN 65508
@@ -34,10 +35,9 @@ static void* readTask(void* useless){
         // Note: we don't need null terminator here because we're going to send the result, not print it
         // Our receiver will add the null terminator for us
 
-        // TODO: CREATE A MUTEX FOR ENQUEUEING AND DEQUEUEING
         // TODO: CREATE A COND VAR SUCH THAT AFTER READ, IMMEDIATELY SEND
         // Adding the message to the list
-        List_prepend(list, message);
+        enqueueMessage(list, message);
     }
     return NULL;
 }

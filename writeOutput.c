@@ -53,12 +53,10 @@ void writerInit(List* l){
 void writerShutdown()
 {
     // De-allocating dynamically allocated message if shutdown is called while message is not yet freed
-    if(message != NULL)
-    {
-        free(message);
-        message=NULL;
-    }
-    
+    // Note: if we HAVE already freed the pointer, then we've set the message pointer to NULL
+    // and it is okay to free a NULL pointer (it does nothing)
+    free(message);
+
     pthread_cancel(writerThread);
     pthread_join(writerThread, NULL);
 }

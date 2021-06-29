@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "queueOperations.h"
 #include "sendUDP.h"
 
 //Preparing variables to use
@@ -69,7 +70,7 @@ static void* senderLoop(void* unused)
     while(1)
     {
         // Getting message from list
-        message = (char *) List_trim(list);
+        message = dequeueMessage(list);
         
         // Sending
         numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
@@ -105,10 +106,9 @@ void senderInit(char* hostnm, char* p, List* l)
 void senderShutdown()
 {
     // De-allocating dynamically allocated message if shutdown is called while message is not yet freed
-    if(message!=NULL)
-    {
-        free(message);
-    }
+    // Note: if we HAVE already freed the pointer, then we've set the message pointer to NULL
+    // and it is okay to free a NULL pointer (it does nothing)
+    free(message);
 
     // Freeing our results from getaddrinfo
     freeaddrinfo(servinfo);
