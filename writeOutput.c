@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h> 
+#include <pthread.h>
+
 #include "list.h"
+#include "writeOutput.h"
 #define MAXBUFLEN 65508
 
 static pthread_t writerThread;

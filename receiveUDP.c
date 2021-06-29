@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "receiveUDP.h"
 
 // Max size of the message, theoretical max size of a UDP packet in IPv4.
 #define MAXBUFLEN 65508

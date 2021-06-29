@@ -14,6 +14,7 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "sendUDP.h"
 
 //Preparing variables to use
 static int sockfd;
