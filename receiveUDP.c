@@ -21,7 +21,6 @@
 // Preparing variables we'll use
 static int sockfd;
 static struct addrinfo *servinfo;
-static char* message;
 static char* hostname;
 static char* port;
 static List* list;
@@ -36,6 +35,7 @@ static void* receiverLoop (void* unused)
     int bindVal;
     int numbytes;
     char buf[MAXBUFLEN];
+    char* message;
     struct sockaddr_in their_addr;
     socklen_t addr_len;
     char s[INET_ADDRSTRLEN];
