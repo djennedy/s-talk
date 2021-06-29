@@ -53,7 +53,7 @@ static void* receiverLoop (void* unused)
     if (gaiVal != 0 )
     {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(gaiVal));
-        return NULL;
+        exit(-1);
     }
 
     // Initializing a socket and binding it to any port we find
@@ -85,7 +85,7 @@ static void* receiverLoop (void* unused)
     if(p==NULL)
     {
         fprintf(stderr, "receiver: failed to bind socket");
-        return NULL;
+        exit(-1);
     }
 
     // Freeing our results from getaddrinfo
@@ -95,16 +95,14 @@ static void* receiverLoop (void* unused)
     {
         // Receiving
         addr_len = sizeof(their_addr);
-        numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1, 0, (struct sockaddr* ) &their_addr, &addr_len);
+        numbytes = recvfrom(sockfd, buf, MAXBUFLEN, 0, (struct sockaddr* ) &their_addr, &addr_len);
         
         // Error checking recvfrom
         if(numbytes ==-1)
         {
             perror("receiver: recvfrom error");
-            return NULL;
+            exit(-1);
         }
-
-        buf[numbytes]='\0';
 
         // Copying buf to a smaller string to put to the list
         // TODO: REMEMBER TO FREE THE LIST LATER!

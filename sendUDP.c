@@ -41,7 +41,7 @@ static void* senderLoop(void* unused)
     if (gaiVal != 0 )
     {
         fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(gaiVal));
-        return NULL;
+        exit(-1);
     }
 
     // Initializing a socket and binding it to any port we find
@@ -62,7 +62,7 @@ static void* senderLoop(void* unused)
     if(p==NULL)
     {
         fprintf(stderr, "sender: failed to create socket");
-        return NULL;
+        exit(-1);
     }
 
     while(1)
@@ -80,7 +80,7 @@ static void* senderLoop(void* unused)
         if(numbytes ==-1)
         {
             perror("sender: sendto error");
-            return NULL;
+            exit(-1);
         }
     }
     return NULL;
