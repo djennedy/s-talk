@@ -1,8 +1,6 @@
 // using part of Darrn's check + addrino info since its more accurate
 
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
