@@ -15,6 +15,7 @@
 
 #include "list.h"
 #include "queueOperations.h"
+#include "writeOutput.h"
 #include "receiveUDP.h"
 
 // Max size of the message, theoretical max size of a UDP packet in IPv4.
@@ -114,6 +115,9 @@ static void* receiverLoop (void* unused)
 
         // Adding message to the list
         enqueueMessage(list, message);
+
+        // Signals writer to write message to screen
+        writerSignaller();
     }
     return NULL;
 }

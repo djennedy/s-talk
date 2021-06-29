@@ -11,6 +11,8 @@
 #define MAXBUFLEN 65508
 
 static pthread_t writerThread;
+static pthread_mutex_t writeAvailableCondMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t writeAvailableCond = PTHREAD_COND_INITIALIZER;
 static List* list;
 static char* message;
 
@@ -18,6 +20,12 @@ static void* writeLoop(void* useless){
 
     while(1)
     {
+        // Waits the write funtion, will be signalled by receiveUDP
+        pthread_mutex_lock(&writeAvailableCondMutex);
+        {
+            pthread_cond_wait(&writeAvailableCond, &writeAvailableCondMutex);
+        }
+        pthread_mutex_unlock(&writeAvailableCondMutex);
 
         // TODO: CREATE A COND VAR SUCH THAT AFTER SEND, IMMEDIATELY WRITE
         // Taking message from list
@@ -35,6 +43,16 @@ static void* writeLoop(void* useless){
     }
     return NULL;
     
+}
+
+void writerSignaller()
+{
+    //Signals the writer, will be called by receiveUDP
+    pthread_mutex_lock(&writeAvailableCondMutex);
+    {
+        pthread_cond_signal(&writeAvailableCond);
+    }
+    pthread_mutex_unlock(&writeAvailableCondMutex);
 }
 
 
