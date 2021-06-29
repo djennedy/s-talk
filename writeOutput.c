@@ -6,23 +6,22 @@
 #include <pthread.h>
 
 #include "list.h"
+#include "queueOperations.h"
 #include "writeOutput.h"
 #define MAXBUFLEN 65508
 
 static pthread_t writerThread;
 static List* list;
+static char* message;
 
 static void* writeLoop(void* useless){
 
     while(1)
     {
-        // Declaring variables
-        char* message;
 
-        // TODO: CREATE A MUTEX FOR ENQUEUEING AND DEQUEUEING
         // TODO: CREATE A COND VAR SUCH THAT AFTER SEND, IMMEDIATELY WRITE
         // Taking message from list
-        message = List_trim(list);
+        message = dequeueMessage(list);
 
         int writeVar = write(1,List_trim(list), strlen(message)); // will put the message from first list onto screen
         if(writeVar == -1){
@@ -32,6 +31,7 @@ static void* writeLoop(void* useless){
 
         // Freeing message (message is dynamically allocated from receiver)
         free(message);
+        message = NULL;
     }
     return NULL;
     
@@ -52,6 +52,13 @@ void writerInit(List* l){
 
 void writerShutdown()
 {
+    // De-allocating dynamically allocated message if shutdown is called while message is not yet freed
+    if(message != NULL)
+    {
+        free(message);
+        message=NULL;
+    }
+    
     pthread_cancel(writerThread);
     pthread_join(writerThread, NULL);
 }

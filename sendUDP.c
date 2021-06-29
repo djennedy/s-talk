@@ -23,6 +23,7 @@ static char* hostname;
 static char* port;
 static List* list;
 static pthread_t senderThread;
+static char* message;
 
 static void* senderLoop(void* unused)
 {
@@ -30,7 +31,6 @@ static void* senderLoop(void* unused)
     int gaiVal;
     int bindVal;
     int numbytes;
-    char* message;
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
     hints.ai_family = AF_INET;
@@ -74,8 +74,9 @@ static void* senderLoop(void* unused)
         // Sending
         numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
         
-        // De-allocating 
+        // De-allocating message
         free(message);
+        message = NULL;
 
         // Error checking recvfrom
         if(numbytes ==-1)
@@ -103,6 +104,11 @@ void senderInit(char* hostnm, char* p, List* l)
 }
 void senderShutdown()
 {
+    // De-allocating dynamically allocated message if shutdown is called while message is not yet freed
+    if(message!=NULL)
+    {
+        free(message);
+    }
 
     // Freeing our results from getaddrinfo
     freeaddrinfo(servinfo);
