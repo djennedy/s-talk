@@ -12,33 +12,76 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include <pthread.h> 
 #include "list.h"
 #define MAXBUFLEN 65508
 
 static pthread_t writeThread;
+static List* list;
+
+//brians vid on synchronozayion 
+
+static pthread_cond_t readyForWrite = PTHREAD_COND_INITIALIZER;
+
+
+// //create condition
+// int readyForWrite;
+// pthread_cond_init(readyForWrite, attr);
+// //^^figure out the parameters for this ^^//
+
+//creating a mutex
+// pthread_mutex_init(mutex, attr);
+
+//locking mutex
+// pthread_mutex_lock(mutex); // acquire a lock on the mutex
+
+
+
+
+static  pthread_t writeThread;
+static pthread_cond_t readyW = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t readyWMutex = PTHREAD_MUTEX_INITIALIZER;
+
+
+
 
 void writeTask(void* useless){
-    if(List_count(list) !=0){// while there are items on the list
-            printf("Testing writeScreen!");
-            int writeVar = write(1,List_trim(list), MAXBUFLEN ); // will put the message from first list onto screen
 
-            
-            if(writeVar == -1){
-                perror("Error: Unable to write to screen");
+    int writeVar = write(1,List_trim(list), MAXBUFLEN ); // will put the message from first list onto screen
+    if(writeVar == -1){
+        perror("Error in write() : Unable to write to screen");
 
-            }
-        }
+    }
 }
-
-
 
 
 void writeInit(char* hostname, char* port, List* list){
 
-  int writingThread =  pthread_create(&writeThread, NULL, writeTask, NULL);
+    //before write gets called needs to wait//
+    pthread_mutex_lock(&readyWMutex); // acquire a lock on the mutex
+    {
+        //signal//
+        pthread_cond_wait(&readyW,&readyWMutex);// mutex will release while 
+    }
+    pthread_mutex_unlock(&readyWMutex); // unlocks the mutex
+
+
+    //the condition it needs to check for if it was called from reciever
+    //if so then proceed to do the write
+
+
+
+
+
+
+    int writingThread =  pthread_create(&writeThread, NULL, writeTask, NULL);
     if(writingThread != 0){
         perror("write thread failed");
     }
+
+
+    //once done//
+    pthread_join(writingThread, NULL);
 
 }
 

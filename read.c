@@ -13,21 +13,23 @@
 #include <netdb.h>
 
 #include <pthread.h> 
-
 #include "list.h"
 #define MAXBUFLEN 65508
 
-static  pthread_t readThread;
+static List* list;
 
+static  pthread_t readThread;
+static pthread_cond_t ready = PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t readyMutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 void readTask(void* useless){
     //read gets called  // done
     //adds message to list // done
-    //notify sendUDP that read is done // use condition variable, pthreads
+    //notify sendUDP that read is ready // done
 
 
-    // said below was right idea..//
+
     char bufStorageOfMessage[MAXBUFLEN]; 
     // bufStorageOfMessage = '\0';
     read(0,bufStorageOfMessage, MAXBUFLEN -1);
@@ -38,9 +40,19 @@ void readTask(void* useless){
 void readInit(char* hostname, char* port, List* list){
 
     int readingThread =  pthread_create(&readThread, NULL, readTask, NULL);
-    if(readingThread != 0){
+    if(readingThread <= 0){//if gave error of -1 or 0 for false
         perror("read thread failed");
     }
+    
+    //signaling sendUPD
+    //wrapping the signal in locks
+    pthread_mutex_lock(&readyMutex); // acquire a lock on the mutex
+    {
+        //signal//
+        pthread_cond_signal(&ready);
+    }
+    pthread_mutex_unlock(&readyMutex); // unlocks the mutex
+
 
 }
 
