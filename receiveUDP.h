@@ -3,6 +3,10 @@
 
 #include "list.h"
 
+// Receives a string through connectionless UDP
+// IPv4 is exclusively used
+// Starts a new pthread
+
 void receiverInit(char* hostnm, char* p, List* l);
 void receiverShutdown();
 
