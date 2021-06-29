@@ -16,33 +16,12 @@
 #include "list.h"
 #define MAXBUFLEN 65508
 
-static pthread_t writeThread;
 static List* list;
 
 //brians vid on synchronozayion 
-
-static pthread_cond_t readyForWrite = PTHREAD_COND_INITIALIZER;
-
-
-// //create condition
-// int readyForWrite;
-// pthread_cond_init(readyForWrite, attr);
-// //^^figure out the parameters for this ^^//
-
-//creating a mutex
-// pthread_mutex_init(mutex, attr);
-
-//locking mutex
-// pthread_mutex_lock(mutex); // acquire a lock on the mutex
-
-
-
-
-static  pthread_t writeThread;
+static pthread_t writeThread;
 static pthread_cond_t readyW = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t readyWMutex = PTHREAD_MUTEX_INITIALIZER;
-
-
 
 
 void writeTask(void* useless){
@@ -58,6 +37,7 @@ void writeTask(void* useless){
 void writeInit(char* hostname, char* port, List* list){
 
     //before write gets called needs to wait//
+    //wait until signalled// 
     pthread_mutex_lock(&readyWMutex); // acquire a lock on the mutex
     {
         //signal//
@@ -70,15 +50,10 @@ void writeInit(char* hostname, char* port, List* list){
     //if so then proceed to do the write
 
 
-
-
-
-
     int writingThread =  pthread_create(&writeThread, NULL, writeTask, NULL);
     if(writingThread != 0){
-        perror("write thread failed");
+        perror("Error: write thread failed");
     }
-
 
     //once done//
     pthread_join(writingThread, NULL);
