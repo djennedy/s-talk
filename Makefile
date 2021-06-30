@@ -1,18 +1,15 @@
 CFLAGS = -Wall -Werror
 
-all: 
-	build
+all: build
 
 build:
 	gcc $(CFLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c queueOperations.c  -pthread -o s-talk
 
-run: 
-	build
+run: build
 	./s-talk
 
 
-valgrind:
-	build
+valgrind: build
 	valgrind --leak-check=full ./s-talk
 
 
