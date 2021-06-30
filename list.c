@@ -217,7 +217,7 @@ void* List_next(List* pList)
         return NULL;
     }
 
-    if(pList->current==pList->tail || pList->current==NULL && pList->oob==LIST_OOB_END)
+    if(pList->current==pList->tail || (pList->current==NULL && pList->oob==LIST_OOB_END))
     {
         pList->oob = LIST_OOB_END;
         pList->current = NULL;
@@ -246,7 +246,7 @@ void* List_prev(List* pList)
         return NULL;
     }
 
-    if(pList->current == pList->head || pList->current==NULL && pList->oob==LIST_OOB_START)
+    if(pList->current == pList->head || (pList->current==NULL && pList->oob==LIST_OOB_START))
     {
         pList->oob = LIST_OOB_START;
         pList->current = NULL;
