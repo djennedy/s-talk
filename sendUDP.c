@@ -20,8 +20,8 @@
 //Preparing variables to use
 static int sockfd;
 static struct addrinfo *servinfo;
-static char* hostname;
-static char* port;
+static char* theirHostname;
+static char* theirPort;
 static List* list;
 static pthread_t senderThread;
 static char* message;
@@ -37,8 +37,9 @@ static void* senderLoop(void* unused)
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_DGRAM;
 
-    //Getting address information with getaddrinfo
-    gaiVal = getaddrinfo(hostname, port, &hints, &servinfo);
+    // Getting address information with getaddrinfo
+    // Sending to theirHostname, on theirPort
+    gaiVal = getaddrinfo(theirHostname, theirPort, &hints, &servinfo);
     // Error checking for getaddrinfo
     if (gaiVal != 0 )
     {
@@ -91,8 +92,8 @@ static void* senderLoop(void* unused)
 
 void senderInit(char* hostnm, char* p, List* l)
 {
-    hostname=hostnm;
-    port = p;
+    theirHostname=hostnm;
+    theirPort = p;
     list = l;
 
     int stVal = pthread_create(&senderThread, NULL, senderLoop, NULL);
