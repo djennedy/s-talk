@@ -1,9 +1,9 @@
-CFLAGS = -Wall -Werror
+CFLAGS = -Wall -Werror 
 
 all: build
 
 build:
-	gcc $(CFLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c queueOperations.c  -pthread -o s-talk
+	gcc $(CFLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c queueOperations.c list.c -o s-talk -lpthread
 
 run: build
 	./s-talk
