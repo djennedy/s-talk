@@ -1,22 +1,20 @@
-// make file
-
-FLAGS = -Wall -Werror
+CFLAGS = -Wall -Werror
 
 all: 
 	build
 
 build:
-	gcc $(FLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c  -pthread -o s-talk
+	gcc $(CFLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c queueOperations.c  -pthread -o s-talk
 
 run: 
 	build
-	./s-Talk
+	./s-talk
 
 
 valgrind:
 	build
-	valgrind --leak-check=full ./s-Talk
+	valgrind --leak-check=full ./s-talk
 
 
 clean:
-	rm -f s-Talk
+	rm -f s-talk
