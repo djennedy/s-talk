@@ -73,7 +73,7 @@ static void* senderLoop(void* unused)
     
     while(1)
     {
-        //Waits until notified by the sendSignaller = pthread_cond_wait
+        //Waits until notified by the senderSignaller = pthread_cond_wait
         pthread_mutex_lock(&sendAvailableCondMutex);
         {
             pthread_cond_wait(&sendAvailableCond, &sendAvailableCondMutex);
@@ -109,7 +109,7 @@ static void* senderLoop(void* unused)
     return NULL;
 }
  
-void sendSignaller(){
+void senderSignaller(){
  
     //Signals other thread,send thread, waiting on condition variable
     pthread_mutex_lock(&sendAvailableCondMutex);
