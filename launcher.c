@@ -16,7 +16,7 @@ int main (int argc, char * argv[])
     {
         printf("Please enter valid arguments \n");
         printf("Valid argument strucure is: \n");
-        printf("s-talk [my port number] [remote machine name] [remote port number]");
+        printf("s-talk [my port number] [remote machine name] [remote port number]\n");
         return -1;
     }
 
