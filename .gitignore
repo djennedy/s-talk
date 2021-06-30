@@ -1,4 +1,5 @@
 *.o
+s-talk
 
 .vscode/*
 !.vscode/settings.json
