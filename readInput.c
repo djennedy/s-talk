@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "list.h"
 #include "queueOperations.h"
 #include "readInput.h"
+#include "sendUDP.h"
 
 #define MAXBUFLEN 65508
 
@@ -39,7 +41,7 @@ static void* readLoop(void* useless){
         enqueueMessage(list, message);
 
         //send signal for the senderUDP
-        sendSignaller(); 
+        senderSignaller(); 
 
         // Checking for exit code
         if (!strcmp(message,"!"))
