@@ -24,8 +24,7 @@
 // Preparing variables we'll use
 static int sockfd;
 static struct addrinfo *servinfo;
-static char* hostname;
-static char* port;
+static char* myPort;
 static List* list;
 static pthread_t receiverThread;
 
@@ -49,8 +48,9 @@ static void* receiverLoop (void* unused)
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE;
 
-    //Getting address information with getaddrinfo
-    gaiVal = getaddrinfo(hostname, port, &hints, &servinfo);
+    // Getting address information with getaddrinfo
+    // Listening on our machine, on myPort
+    gaiVal = getaddrinfo(NULL, myPort, &hints, &servinfo);
 
     // Error checking for getaddrinfo
     if (gaiVal != 0 )
@@ -122,10 +122,9 @@ static void* receiverLoop (void* unused)
     return NULL;
 }
 
-void receiverInit(char* hostnm, char* p, List* l)
+void receiverInit(char* myP, List* l)
 {
-    hostname = hostnm;
-    port = p;
+    myPort = myP;
     list = l;
 
     int rectVal = pthread_create(&receiverThread, NULL, receiverLoop, NULL);
