@@ -26,8 +26,7 @@ static void* writeLoop(void* useless){
             pthread_cond_wait(&writeAvailableCond, &writeAvailableCondMutex);
         }
         pthread_mutex_unlock(&writeAvailableCondMutex);
-
-        // TODO: CREATE A COND VAR SUCH THAT AFTER SEND, IMMEDIATELY WRITE
+        
         // Taking message from list
         message = dequeueMessage(list);
 
