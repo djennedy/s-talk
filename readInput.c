@@ -14,7 +14,7 @@
 static List* list;
 static pthread_t readerThread;
 
-static void* readTask(void* useless){
+static void* readLoop(void* useless){
     while(1)
     {
         // Declaring variables
@@ -30,6 +30,7 @@ static void* readTask(void* useless){
         }
 
         // Downsizing the size of the message to be more space efficient
+        // Downsizing the size of the message to be more space efficient
         message = (char*)malloc(sizeof(char)*(numbytes+1));
         strncpy(message, bufStorageOfMessage, numbytes);
         message[numbytes] = '\0';
@@ -37,11 +38,15 @@ static void* readTask(void* useless){
         // Adding the message to the list
         enqueueMessage(list, message);
 
+        //send signal for the senderUDP
+        sendSignaller(); 
+
         // Checking for exit code
         if (!strcmp(message,"!"))
         {
             return NULL;
         }
+
     }
     return NULL;
 }
@@ -50,11 +55,12 @@ static void* readTask(void* useless){
 void readerInit(List* l){
     list = l;
 
-    int readingThread =  pthread_create(&readerThread, NULL, readTask, NULL);
+    int readingThread =  pthread_create(&readerThread, NULL, readLoop, NULL);
     if(readingThread !=0){//if gave error code of not 0 (0 is success)
         perror("reader: thread creation error");
         exit(-1);
     }
+    
 }
 
 void readerShutdown()

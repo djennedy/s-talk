@@ -39,6 +39,7 @@ void readTask(void* useless){
 
 void readInit(char* hostname, char* port, List* list){
 
+    //first read gets called and added to list
     int readingThread =  pthread_create(&readThread, NULL, readTask, NULL);
     if(readingThread <= 0){//if gave error of -1 or 0 for false
         perror("read thread failed");

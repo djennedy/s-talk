@@ -9,5 +9,6 @@
 
 void senderInit(char* hostnm, char* p, List* l);
 void senderShutdown();
+void senderSignaller();
 
 #endif
