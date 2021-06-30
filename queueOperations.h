@@ -1,7 +1,7 @@
 #ifndef _QUEUE_OPERATIONS_H
 #define _QUEUE_OPERATIONS_H
 
-#include "list.h";
+#include "list.h"
 
 // Manages the shared queue operations
 // Creates mutexes for both operations

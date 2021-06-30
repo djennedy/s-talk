@@ -34,7 +34,6 @@ static void* senderLoop(void* unused)
 {
     struct addrinfo hints, *p;
     int gaiVal;
-    int bindVal;
     int numbytes;
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
@@ -75,11 +74,11 @@ static void* senderLoop(void* unused)
     while(1)
     {
         //Waits until notified by the sendSignaller = pthread_cond_wait
-        pthread_cond_lock(&sendAvailableCond);
+        pthread_mutex_lock(&sendAvailableCondMutex);
         {
             pthread_cond_wait(&sendAvailableCond, &sendAvailableCondMutex);
         }
-        pthread_cond_unlock(&sendAvailableCond);
+        pthread_mutex_lock(&sendAvailableCondMutex);
 
         // Getting message from list
         message = dequeueMessage(list);

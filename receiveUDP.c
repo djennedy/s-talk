@@ -40,7 +40,6 @@ static void* receiverLoop (void* unused)
     char* message;
     struct sockaddr_in their_addr;
     socklen_t addr_len;
-    char s[INET_ADDRSTRLEN];
 
     // Setting up the hints addrinfo for the getaddrinfo function
     memset(&hints, 0 ,sizeof (hints));
@@ -120,7 +119,7 @@ static void* receiverLoop (void* unused)
 
         if(!strcmp(message, "!"))
         {
-            return;
+            return NULL;
         }
     }
     return NULL;
