@@ -30,14 +30,18 @@ static void* readTask(void* useless){
         }
 
         // Downsizing the size of the message to be more space efficient
-        message = (char*)malloc(sizeof(char)*(numbytes));
+        message = (char*)malloc(sizeof(char)*(numbytes+1));
         strncpy(message, bufStorageOfMessage, numbytes);
-        // Note: we don't need null terminator here because we're going to send the result, not print it
-        // Our receiver will add the null terminator for us
+        message[numbytes] = '\0';
 
-        // TODO: CREATE A COND VAR SUCH THAT AFTER READ, IMMEDIATELY SEND
         // Adding the message to the list
         enqueueMessage(list, message);
+
+        // Checking for exit code
+        if (!strcmp(message,"!"))
+        {
+            return NULL;
+        }
     }
     return NULL;
 }
@@ -51,11 +55,9 @@ void readerInit(List* l){
         perror("reader: thread creation error");
         exit(-1);
     }
-    
 }
 
 void readerShutdown()
 {
-    pthread_cancel(readerThread);
     pthread_join(readerThread,NULL);
 }

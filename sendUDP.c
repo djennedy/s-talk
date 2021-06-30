@@ -75,6 +75,14 @@ static void* senderLoop(void* unused)
         
         // Sending
         numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
+
+        // Check for exit code
+        if(!strcmp(message,"!"))
+        {
+            free(message);
+            message = NULL;
+            return NULL;
+        }
         
         // De-allocating message
         free(message);
@@ -110,6 +118,7 @@ void senderShutdown()
     // Note: if we HAVE already freed the pointer, then we've set the message pointer to NULL
     // and it is okay to free a NULL pointer (it does nothing)
     free(message);
+    message=NULL;
 
     // Freeing our results from getaddrinfo
     freeaddrinfo(servinfo);
@@ -117,6 +126,5 @@ void senderShutdown()
     // closing connection to the socket
     close(sockfd);
 
-    pthread_cancel(senderThread);
     pthread_join(senderThread, NULL);
 }

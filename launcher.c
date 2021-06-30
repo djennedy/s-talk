@@ -29,11 +29,21 @@ int main (int argc, char * argv[])
     List* list = List_create();
 
     // Initializes the four modules
+    // Modules are running in an infinite loop, they will exit when given the exit code "!"
     readerInit(list);
     senderInit(theirHostname, theirPort, list);
     receiverInit(myPort, list);
     writerInit(list);
 
-    // TODO: Implement stop signal
+    // Cleans up the threads
+    readerShutdown();
+    senderShutdown();
+    receiverShutdown();
+    writerShutdown();
 
+    // Frees the list
+    // At this point, the list should already be empty
+    List_free(list, free);
+
+    return 0;
 }

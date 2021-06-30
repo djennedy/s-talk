@@ -37,6 +37,14 @@ static void* writeLoop(void* useless){
             exit(-1);
         }
 
+        // Checking for exit code
+        if(!strcmp(message, "!"))
+        {
+            free(message);
+            message = NULL;
+            return NULL;
+        }
+
         // Freeing message (message is dynamically allocated from receiver)
         free(message);
         message = NULL;
@@ -75,7 +83,6 @@ void writerShutdown()
     // and it is okay to free a NULL pointer (it does nothing)
     free(message);
 
-    pthread_cancel(writerThread);
     pthread_join(writerThread, NULL);
 }
 

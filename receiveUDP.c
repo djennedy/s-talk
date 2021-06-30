@@ -108,7 +108,6 @@ static void* receiverLoop (void* unused)
         }
 
         // Copying buf to a smaller string to put to the list
-        // TODO: REMEMBER TO FREE THE LIST LATER!
         message = (char*)malloc(sizeof(char)*(numbytes+1));
         strncpy(message, buf, numbytes);
         message[numbytes] = '\0';
@@ -118,6 +117,11 @@ static void* receiverLoop (void* unused)
 
         // Signals writer to write message to screen
         writerSignaller();
+
+        if(!strcmp(message, "!"))
+        {
+            return;
+        }
     }
     return NULL;
 }
@@ -142,6 +146,5 @@ void receiverShutdown()
     // closing connection to the socket
     close(sockfd);
 
-    pthread_cancel(receiverThread);
     pthread_join(receiverThread, NULL);
 }
