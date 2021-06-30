@@ -46,7 +46,7 @@ static void* senderLoop(void* unused)
     // Error checking for getaddrinfo
     if (gaiVal != 0 )
     {
-        fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(gaiVal));
+        fprintf(stderr, "sender: getaddrinfo error: %s\n", gai_strerror(gaiVal));
         exit(-1);
     }
     
