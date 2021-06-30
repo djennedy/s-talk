@@ -14,7 +14,7 @@
 #include <pthread.h>
  
 #include "list.h"
-#include "queueOperations.h"
+#include "queueOperations.h" // in another branch
 #include "sendUDP.h"
  
 //Preparing variables to use
@@ -143,4 +143,5 @@ void senderShutdown()
    close(sockfd);
  
    pthread_cancel(senderThread);
-   pthread_join(senderThread
+   pthread_join(senderThread, NULL); 
+}
