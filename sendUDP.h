@@ -8,6 +8,7 @@
 // Starts a new pthread
 
 void senderInit(char* hostnm, char* p, List* l);
+void senderCancel();
 void senderShutdown();
 void senderSignaller();
 

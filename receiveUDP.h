@@ -9,5 +9,6 @@
 
 void receiverInit(char* myP, List* l);
 void receiverShutdown();
+void receiverCancel();
 
 #endif

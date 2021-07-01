@@ -10,6 +10,7 @@
 #include "queueOperations.h"
 #include "readInput.h"
 #include "sendUDP.h"
+#include "threadCanceller.h"
 
 #define MAXBUFLEN 65508
 
@@ -41,11 +42,12 @@ static void* readLoop(void* useless){
         enqueueMessage(list, message);
 
         //send signal for the senderUDP
-        senderSignaller(); 
+        senderSignaller();
 
         // Checking for exit code
-        if (!strcmp(message,"!"))
+        if (!strcmp(message,"!\n"))
         {
+            cancelReceiverWriter();
             return NULL;
         }
 
@@ -63,6 +65,11 @@ void readerInit(List* l){
         exit(-1);
     }
     
+}
+
+void readerCancel()
+{
+    pthread_cancel(readerThread);
 }
 
 void readerShutdown()

@@ -8,5 +8,6 @@
 
 void readerInit(List* l);
 void readerShutdown();
+void readerCancel();
 
 #endif

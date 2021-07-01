@@ -9,6 +9,7 @@
 #include "list.h"
 #include "queueOperations.h"
 #include "writeOutput.h"
+
 #define MAXBUFLEN 65508
 
 static pthread_t writerThread;
@@ -38,7 +39,7 @@ static void* writeLoop(void* useless){
         }
 
         // Checking for exit code
-        if(!strcmp(message, "!"))
+        if(!strcmp(message, "!\n"))
         {
             free(message);
             message = NULL;
@@ -74,6 +75,11 @@ void writerInit(List* l){
         exit(-1);
     }
 
+}
+
+void writerCancel()
+{
+    pthread_cancel(writerThread);
 }
 
 void writerShutdown()

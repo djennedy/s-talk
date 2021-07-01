@@ -17,6 +17,7 @@
 #include "queueOperations.h"
 #include "writeOutput.h"
 #include "receiveUDP.h"
+#include "threadCanceller.h"
 
 // Max size of the message, theoretical max size of a UDP packet in IPv4.
 #define MAXBUFLEN 65508
@@ -117,8 +118,9 @@ static void* receiverLoop (void* unused)
         // Signals writer to write message to screen
         writerSignaller();
 
-        if(!strcmp(message, "!"))
+        if(!strcmp(message, "!\n"))
         {
+            cancelReaderSender();
             return NULL;
         }
     }
@@ -136,6 +138,11 @@ void receiverInit(char* myP, List* l)
         perror("sender: thread creation error");
         exit(-1);
     }
+}
+
+void receiverCancel()
+{
+    pthread_cancel(receiverThread);
 }
 void receiverShutdown()
 {

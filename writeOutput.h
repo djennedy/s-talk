@@ -8,6 +8,7 @@
 
 void writerSignaller();
 void writerInit(List* l);
+void writerCancel();
 void writerShutdown();
 
 #endif

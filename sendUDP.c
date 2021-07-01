@@ -88,7 +88,7 @@ static void* senderLoop(void* unused)
         numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
 
         // Check for exit code
-        if(!strcmp(message,"!"))
+        if(!strcmp(message,"!\n"))
         {
             free(message);
             message = NULL;
@@ -119,7 +119,11 @@ void senderSignaller(){
     pthread_mutex_unlock(&sendAvailableCondMutex);
   
 }
- 
+
+void senderCancel()
+{
+    pthread_cancel(senderThread);
+}
  
  
 void senderInit(char* hostnm, char* p, List* l)
