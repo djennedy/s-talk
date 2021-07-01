@@ -31,7 +31,7 @@ static void* writeLoop(void* useless){
         // Taking message from list
         message = dequeueMessage(list);
 
-        int writeVar = write(1,List_trim(list), strlen(message)); // will put the message from first list onto screen
+        int writeVar = write(1,message, strlen(message)); // will put the message from first list onto screen
         if(writeVar == -1){
             perror("Error in write() : Unable to write to screen");
             exit(-1);
