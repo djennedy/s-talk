@@ -489,7 +489,10 @@ void List_free(List* pList, FREE_FN pItemFreeFn)
         Node* temp = pList->current;
         pList->current = pList->current->next;
 
-        (*pItemFreeFn)(temp->item);
+        if(pItemFreeFn!=NULL)
+        {
+            (*pItemFreeFn)(temp->item);
+        }
         pushNodeMem(temp);
     }
 
@@ -530,6 +533,10 @@ typedef bool (*COMPARATOR_FN)(void* pItem, void* pComparisonArg);
 void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg)
 {
     assert(pList!=NULL);
+    if(pComparator==NULL)
+    {
+        return NULL;
+    }
     
     if(pList->numItems==0)
     {

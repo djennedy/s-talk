@@ -7,7 +7,7 @@ all:
 
 build:
 	gcc $(FLAGS) launcher.c readInput.c writeOutput.c sendUDP.c receiveUDP.c  -pthread -o s-talk
-
+  
 run: 
 	build
 	./s-Talk

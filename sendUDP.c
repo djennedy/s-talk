@@ -1,6 +1,5 @@
 // Code is adapted (not copied) from Brian Fraser's Workshops and Beej's Guide to Network Programming examples
 // IPv4 is exclusively used here
- 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,11 +11,11 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <pthread.h>
- 
+
 #include "list.h"
-#include "queueOperations.h" // in another branch
+#include "queueOperations.h"
 #include "sendUDP.h"
- 
+
 //Preparing variables to use
 static int sockfd;
 static struct addrinfo *servinfo;

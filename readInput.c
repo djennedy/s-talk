@@ -66,6 +66,3 @@ void readerShutdown()
     pthread_cancel(readerThread);
     pthread_join(readerThread,NULL);
 }
-
-
-
