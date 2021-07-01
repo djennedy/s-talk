@@ -78,7 +78,7 @@ static void* senderLoop(void* unused)
         {
             pthread_cond_wait(&sendAvailableCond, &sendAvailableCondMutex);
         }
-        pthread_mutex_lock(&sendAvailableCondMutex);
+        pthread_mutex_unlock(&sendAvailableCondMutex);
 
         // Getting message from list
         message = dequeueMessage(list);
