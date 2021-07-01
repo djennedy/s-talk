@@ -1,3 +1,6 @@
+*.o
+s-talk
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -7,3 +10,6 @@
 
 # Local History for Visual Studio Code
 .history/
+.vscode/launch.json
+.gitignore
+.vscode/tasks.json

@@ -217,7 +217,7 @@ void* List_next(List* pList)
         return NULL;
     }
 
-    if(pList->current==pList->tail || pList->current==NULL && pList->oob==LIST_OOB_END)
+    if(pList->current==pList->tail || (pList->current==NULL && pList->oob==LIST_OOB_END))
     {
         pList->oob = LIST_OOB_END;
         pList->current = NULL;
@@ -246,7 +246,7 @@ void* List_prev(List* pList)
         return NULL;
     }
 
-    if(pList->current == pList->head || pList->current==NULL && pList->oob==LIST_OOB_START)
+    if(pList->current == pList->head || (pList->current==NULL && pList->oob==LIST_OOB_START))
     {
         pList->oob = LIST_OOB_START;
         pList->current = NULL;
@@ -489,7 +489,10 @@ void List_free(List* pList, FREE_FN pItemFreeFn)
         Node* temp = pList->current;
         pList->current = pList->current->next;
 
-        (*pItemFreeFn)(temp->item);
+        if(pItemFreeFn!=NULL)
+        {
+            (*pItemFreeFn)(temp->item);
+        }
         pushNodeMem(temp);
     }
 
@@ -530,6 +533,10 @@ typedef bool (*COMPARATOR_FN)(void* pItem, void* pComparisonArg);
 void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg)
 {
     assert(pList!=NULL);
+    if(pComparator==NULL)
+    {
+        return NULL;
+    }
     
     if(pList->numItems==0)
     {

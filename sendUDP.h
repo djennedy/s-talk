@@ -9,7 +9,6 @@
 
 void senderInit(char* hostnm, char* p, List* l);
 void senderShutdown();
-void sendSignaller();
-static void* senderLoop(void* unused);
+void senderSignaller();
 
 #endif

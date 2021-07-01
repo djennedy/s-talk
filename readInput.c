@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "list.h"
 #include "queueOperations.h"
 #include "readInput.h"
+#include "sendUDP.h"
 
 #define MAXBUFLEN 65508
 
@@ -30,20 +32,22 @@ static void* readLoop(void* useless){
         }
 
         // Downsizing the size of the message to be more space efficient
-        message = (char*)malloc(sizeof(char)*(numbytes));
+        // Downsizing the size of the message to be more space efficient
+        message = (char*)malloc(sizeof(char)*(numbytes+1));
         strncpy(message, bufStorageOfMessage, numbytes);
-        // Note: we don't need null terminator here because we're going to send the result, not print it
-        // Our receiver will add the null terminator for us
-
-        // TODO: CREATE A COND VAR SUCH THAT AFTER READ, IMMEDIATELY SEND
+        message[numbytes] = '\0';
 
         // Adding the message to the list
         enqueueMessage(list, message);
 
         //send signal for the senderUDP
-        sendSignaller(); 
+        senderSignaller(); 
 
-
+        // Checking for exit code
+        if (!strcmp(message,"!"))
+        {
+            return NULL;
+        }
 
     }
     return NULL;
@@ -63,9 +67,5 @@ void readerInit(List* l){
 
 void readerShutdown()
 {
-    pthread_cancel(readerThread);
     pthread_join(readerThread,NULL);
 }
-
-
-
