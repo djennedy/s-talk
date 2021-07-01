@@ -21,9 +21,9 @@ int main (int argc, char * argv[])
     }
 
     // Storing arguments
-    char* myPort = argv[2];
-    char* theirHostname = argv[3];
-    char* theirPort = argv[4];
+    char* myPort = argv[1];
+    char* theirHostname = argv[2];
+    char* theirPort = argv[3];
 
     // Creates a shared list
     List* list = List_create();
