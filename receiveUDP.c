@@ -19,8 +19,8 @@
 #include "receiveUDP.h"
 #include "threadCanceller.h"
 
-// Max size of the message, theoretical max size of a UDP packet in IPv4.
-#define MAXBUFLEN 65508
+// Max size of the message, using max value for terminal input
+#define MAXBUFLEN 4096
 
 // Preparing variables we'll use
 static int sockfd;

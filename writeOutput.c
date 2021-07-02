@@ -10,8 +10,8 @@
 #include "queueOperations.h"
 #include "writeOutput.h"
 
-// Max size of the message, theoretical max size of a UDP packet in IPv4.
-#define MAXBUFLEN 65508
+// Max size of the message, using max value for terminal input
+#define MAXBUFLEN 4096
 
 static pthread_t writerThread;
 static pthread_mutex_t writeAvailableCondMutex = PTHREAD_MUTEX_INITIALIZER;
