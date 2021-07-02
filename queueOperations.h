@@ -8,5 +8,6 @@
 
 void enqueueMessage(List* list, char* message);
 char* dequeueMessage(List* list);
+int countMessages(List* list);
 
 #endif

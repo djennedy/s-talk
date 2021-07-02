@@ -96,33 +96,46 @@ static void* receiverLoop (void* unused)
 
     while(1)
     {
-        // Receiving
-        addr_len = sizeof(their_addr);
-        numbytes = recvfrom(sockfd, buf, MAXBUFLEN, 0, (struct sockaddr* ) &their_addr, &addr_len);
-        
-        // Error checking recvfrom
-        if(numbytes ==-1)
+        int iteration = 0;
+        do
         {
-            perror("receiver: recvfrom error");
-            exit(-1);
-        }
+            iteration++;
 
-        // Copying buf to a smaller string to put to the list
-        message = (char*)malloc(sizeof(char)*(numbytes+1));
-        strncpy(message, buf, numbytes);
-        message[numbytes] = '\0';
+            // Emptying out receiving buffer
+            memset(&buf, 0, MAXBUFLEN);
 
-        // Adding message to the list
-        enqueueMessage(list, message);
+            // Receiving
+            addr_len = sizeof(their_addr);
+            numbytes = recvfrom(sockfd, buf, MAXBUFLEN, 0, (struct sockaddr* ) &their_addr, &addr_len);
+            
+            // Error checking recvfrom
+            if(numbytes ==-1)
+            {
+                perror("receiver: recvfrom error");
+                exit(-1);
+            }
+
+            // Copying buf to a smaller string to put to the list
+            message = (char*)malloc(sizeof(char)*(numbytes+1));
+            strncpy(message, buf, numbytes);
+            message[numbytes] = '\0';
+
+            // Adding message to the list
+            enqueueMessage(list, message);
+
+            // Checking for exit code
+            // Ends the process if exit code was in the first iteration of receive
+            if(!strcmp(message, "!\n") && iteration == 1)
+            {
+                writerSignaller();
+                cancelReaderSender();
+                return NULL;
+            }
+        } while (buf[numbytes-1]!='\n');
+
 
         // Signals writer to write message to screen
         writerSignaller();
-
-        if(!strcmp(message, "!\n"))
-        {
-            cancelReaderSender();
-            return NULL;
-        }
     }
     return NULL;
 }

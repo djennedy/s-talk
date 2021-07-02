@@ -80,31 +80,38 @@ static void* senderLoop(void* unused)
         }
         pthread_mutex_unlock(&sendAvailableCondMutex);
 
-        // Getting message from list
-        message = dequeueMessage(list);
-    
-    
-        // Sending
-        numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
+        int iteration = 0;
 
-        // Check for exit code
-        if(!strcmp(message,"!\n"))
+        do
         {
+            iteration++;
+
+            // Getting message from list
+            message = dequeueMessage(list);
+        
+            // Sending
+            numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
+
+            // Check for exit code
+            // Ends the thread if exit code is passed in the first iteration of the read
+            if(!strcmp(message,"!\n") && iteration==1)
+            {
+                free(message);
+                message = NULL;
+                return NULL;
+            }
+            
+            // De-allocating message
             free(message);
             message = NULL;
-            return NULL;
-        }
         
-        // De-allocating message
-        free(message);
-        message = NULL;
-    
-        // Error checking recvfrom
-        if(numbytes ==-1)
-        {
-            perror("sender: sendto error");
-            exit(-1);
-        }
+            // Error checking recvfrom
+            if(numbytes ==-1)
+            {
+                perror("sender: sendto error");
+                exit(-1);
+            }
+        } while (countMessages(list)!=0);  
     }
     return NULL;
 }

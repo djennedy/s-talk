@@ -35,3 +35,8 @@ char* dequeueMessage(List* list)
 
     return message;
 }
+
+int countMessages(List* list)
+{
+    return List_count(list);
+}

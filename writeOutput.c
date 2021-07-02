@@ -10,6 +10,7 @@
 #include "queueOperations.h"
 #include "writeOutput.h"
 
+// Max size of the message, theoretical max size of a UDP packet in IPv4.
 #define MAXBUFLEN 65508
 
 static pthread_t writerThread;
@@ -29,26 +30,33 @@ static void* writeLoop(void* useless){
         }
         pthread_mutex_unlock(&writeAvailableCondMutex);
         
-        // Taking message from list
-        message = dequeueMessage(list);
+        int iteration = 0;
 
-        int writeVar = write(1,message, strlen(message)); // will put the message from first list onto screen
-        if(writeVar == -1){
-            perror("Error in write() : Unable to write to screen");
-            exit(-1);
-        }
-
-        // Checking for exit code
-        if(!strcmp(message, "!\n"))
+        do
         {
+            iteration ++;
+
+            // Taking message from list
+            message = dequeueMessage(list);
+
+            int writeVar = write(1,message, strlen(message)); // will put the message from first list onto screen
+            if(writeVar == -1){
+                perror("Error in write() : Unable to write to screen");
+                exit(-1);
+            }
+
+            // Checking for exit code
+            if(!strcmp(message, "!\n") && iteration == 1)
+            {
+                free(message);
+                message = NULL;
+                return NULL;
+            }
+
+            // Freeing message (message is dynamically allocated from receiver)
             free(message);
             message = NULL;
-            return NULL;
-        }
-
-        // Freeing message (message is dynamically allocated from receiver)
-        free(message);
-        message = NULL;
+        } while (countMessages(list)!=0);
     }
     return NULL;
     

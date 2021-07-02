@@ -12,6 +12,7 @@
 #include "sendUDP.h"
 #include "threadCanceller.h"
 
+// Max size of the message, theoretical max size of a UDP packet in IPv4.
 #define MAXBUFLEN 65508
 
 static List* list;
@@ -23,33 +24,42 @@ static void* readLoop(void* useless){
         // Declaring variables
         char* message;
         char bufStorageOfMessage[MAXBUFLEN]; 
-
-        // Reading user input
-        int numbytes = read(0,bufStorageOfMessage, MAXBUFLEN);
-        if(numbytes==-1)
+        int numbytes;
+        int iteration = 0;
+        do
         {
-            perror("reader: read() failed");
-            exit(-1);
-        }
+            iteration++;
 
-        // Downsizing the size of the message to be more space efficient
-        // Downsizing the size of the message to be more space efficient
-        message = (char*)malloc(sizeof(char)*(numbytes+1));
-        strncpy(message, bufStorageOfMessage, numbytes);
-        message[numbytes] = '\0';
+            // Emptying input string buffer
+            memset(&bufStorageOfMessage, 0, MAXBUFLEN);
+            // Reading user input
+            numbytes = read(0,bufStorageOfMessage, MAXBUFLEN);
+            if(numbytes==-1)
+            {
+                perror("reader: read() failed");
+                exit(-1);
+            }
 
-        // Adding the message to the list
-        enqueueMessage(list, message);
+            // Downsizing the size of the message to be more space efficient
+            message = (char*)malloc(sizeof(char)*(numbytes+1));
+            strncpy(message, bufStorageOfMessage, numbytes);
+            message[numbytes] = '\0';
+
+            // Adding the message to the list
+            enqueueMessage(list, message);
+
+            // Checking for exit code
+            // Ends the process if exit code was in the first iteration of read
+            if (!strcmp(message,"!\n") && iteration==1)
+            {
+                senderSignaller();
+                cancelReceiverWriter();
+                return NULL;
+            }
+        } while (bufStorageOfMessage[numbytes-1]!='\n');
 
         //send signal for the senderUDP
         senderSignaller();
-
-        // Checking for exit code
-        if (!strcmp(message,"!\n"))
-        {
-            cancelReceiverWriter();
-            return NULL;
-        }
 
     }
     return NULL;
