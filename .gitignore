@@ -13,3 +13,4 @@ s-talk
 .vscode/launch.json
 .gitignore
 .vscode/tasks.json
+.vscode/settings.json
