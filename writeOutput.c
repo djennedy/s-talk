@@ -96,6 +96,7 @@ void writerShutdown()
     // Note: if we HAVE already freed the pointer, then we've set the message pointer to NULL
     // and it is okay to free a NULL pointer (it does nothing)
     free(message);
+    message = NULL;
 
     pthread_join(writerThread, NULL);
 }
