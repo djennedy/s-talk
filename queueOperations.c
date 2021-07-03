@@ -38,5 +38,12 @@ char* dequeueMessage(List* list)
 
 int countMessages(List* list)
 {
-    return List_count(list);
+    int count;
+    pthread_mutex_lock(&queueMutex);
+    {
+        count = List_count(list);
+    }
+    pthread_mutex_unlock(&queueMutex);
+
+    return count;
 }
