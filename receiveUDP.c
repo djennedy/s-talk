@@ -131,7 +131,7 @@ static void* receiverLoop (void* unused)
                 cancelReaderSender();
                 return NULL;
             }
-        } while (buf[numbytes-1]!='\n');
+        } while (buf[numbytes-1]!='\n' && iteration != 101);
 
 printf("receiver: number of input right now = %d\n",countMessages(list));
 printf("receiver: number of chunks to write = %d\n", iteration);

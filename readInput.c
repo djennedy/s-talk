@@ -56,7 +56,7 @@ static void* readLoop(void* useless){
                 cancelReceiverWriter();
                 return NULL;
             }
-        } while (bufStorageOfMessage[numbytes-1]!='\n');
+        } while (bufStorageOfMessage[numbytes-1]!='\n' && iteration != 101);
 
 printf("reader: number of input right now = %d\n",countMessages(list));
 printf("reader: number of chunks to send = %d\n", iteration);
