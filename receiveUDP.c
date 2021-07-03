@@ -19,8 +19,8 @@
 #include "receiveUDP.h"
 #include "threadCanceller.h"
 
-// Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 3 // 65506
+// Max size of the message, using theoretical max length for a UDP packet of 65507 - 1 byte for null terminator
+#define MAXBUFLEN 65506
 
 // Preparing variables we'll use
 static int sockfd;
@@ -121,7 +121,11 @@ static void* receiverLoop (void* unused)
             message[numbytes] = '\0';
 
             // Adding message to the list
-            enqueueMessage(list, message);
+            int enqVal = enqueueMessage(list, message);
+            if(enqVal == -1)
+            {
+                fprintf(stderr,"receiver: enqueue error, queue full. Message too long to receive entirely.\n");
+            }
 
             // Checking for exit code
             // Ends the process if exit code was in the first iteration of receive
@@ -131,10 +135,8 @@ static void* receiverLoop (void* unused)
                 cancelReaderSender();
                 return NULL;
             }
-        } while (buf[numbytes-1]!='\n' && iteration != 101);
+        } while (buf[numbytes-1]!='\n' && iteration != 100);
 
-printf("receiver: number of input right now = %d\n",countMessages(list));
-printf("receiver: number of chunks to write = %d\n", iteration);
         // Signals writer to write message to screen
         writerSignaller();
     }

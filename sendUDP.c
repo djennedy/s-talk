@@ -81,7 +81,6 @@ static void* senderLoop(void* unused)
         pthread_mutex_unlock(&sendAvailableCondMutex);
 
         int iteration = 0;
-        printf("sender: number of items to send = %d\n", countMessages(list));
 
         do
         {
@@ -89,6 +88,12 @@ static void* senderLoop(void* unused)
 
             // Getting message from list
             message = dequeueMessage(list);
+
+            if(message==NULL)
+            {
+                fprintf(stderr, "sender: dequeue error, queue empty.\n");
+                break;
+            }
         
             // Sending
             numbytes = sendto(sockfd, message, strlen(message), 0, p->ai_addr, p->ai_addrlen);
@@ -113,9 +118,6 @@ static void* senderLoop(void* unused)
                 exit(-1);
             }
         } while (countMessages(list)!=0);
-
-printf("sender: number of items in list after send = %d\n", countMessages(list));
-printf("sender: number of items sent=  %d\n", iteration);  
     }
     return NULL;
 }

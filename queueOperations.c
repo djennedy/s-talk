@@ -8,17 +8,15 @@
 
 static pthread_mutex_t queueMutex = PTHREAD_MUTEX_INITIALIZER;
 
-void enqueueMessage(List* list, char* message)
+int enqueueMessage(List* list, char* message)
 {
+    int prepVal;
     pthread_mutex_lock(&queueMutex);
     {
-        int prepVal = List_prepend(list, message);
-        if(prepVal==-1)
-        {
-            fprintf(stderr, "Enqueue failed, queue full");
-        }
+        prepVal = List_prepend(list, message);
     }
     pthread_mutex_unlock(&queueMutex);
+    return prepVal;
 }
 char* dequeueMessage(List* list)
 {
@@ -26,10 +24,6 @@ char* dequeueMessage(List* list)
     pthread_mutex_lock(&queueMutex);
     {
         message = List_trim(list);
-        if(message == NULL)
-        {
-            fprintf(stderr, "Dequeue failed, queue empty");
-        }
     }
     pthread_mutex_unlock(&queueMutex);
 

@@ -10,8 +10,8 @@
 #include "queueOperations.h"
 #include "writeOutput.h"
 
-// Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 3 // 65506
+// Max size of the message, using theoretical max length for a UDP packet of 65507 - 1 byte for null terminator
+#define MAXBUFLEN 65506
 
 static pthread_t writerThread;
 static pthread_mutex_t writeAvailableCondMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -32,14 +32,18 @@ static void* writeLoop(void* useless){
         
         int iteration = 0;
 
-printf("writer: number of items to write = %d\n", countMessages(list));
-
         do
         {
             iteration ++;
 
             // Taking message from list
             message = dequeueMessage(list);
+
+            if(message==NULL)
+            {
+                fprintf(stderr, "writer: dequeue error, queue empty.\n");
+                break;
+            }
 
             int writeVar = write(1,message, strlen(message)); // will put the message from first list onto screen
             if(writeVar == -1){
@@ -59,9 +63,6 @@ printf("writer: number of items to write = %d\n", countMessages(list));
             free(message);
             message = NULL;
         } while (countMessages(list)!=0);
-
-printf("writer: number of items in list after write = %d\n", countMessages(list));
-printf("writer: number of items written =  %d\n", iteration);
     }
     return NULL;
     

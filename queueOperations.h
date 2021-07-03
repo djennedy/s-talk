@@ -6,7 +6,7 @@
 // Manages the shared queue operations
 // Creates mutexes for both operations
 
-void enqueueMessage(List* list, char* message);
+int enqueueMessage(List* list, char* message);
 char* dequeueMessage(List* list);
 int countMessages(List* list);
 

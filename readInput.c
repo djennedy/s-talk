@@ -12,8 +12,8 @@
 #include "sendUDP.h"
 #include "threadCanceller.h"
 
-// Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 3 // 65506
+// Max size of the message, using theoretical max length for a UDP packet of 65507 - 1 byte for null terminator
+#define MAXBUFLEN 65506
 
 static List* list;
 static pthread_t readerThread;
@@ -46,7 +46,11 @@ static void* readLoop(void* useless){
             message[numbytes] = '\0';
 
             // Adding the message to the list
-            enqueueMessage(list, message);
+            int enqVal = enqueueMessage(list, message);
+            if(enqVal==-1)
+            {
+                fprintf(stderr,"reader: enqueue error, queue full. Message too long to transmit\n");
+            }
 
             // Checking for exit code
             // Ends the process if exit code was in the first iteration of read
@@ -56,10 +60,8 @@ static void* readLoop(void* useless){
                 cancelReceiverWriter();
                 return NULL;
             }
-        } while (bufStorageOfMessage[numbytes-1]!='\n' && iteration != 101);
+        } while (bufStorageOfMessage[numbytes-1]!='\n' && iteration != 100);
 
-printf("reader: number of input right now = %d\n",countMessages(list));
-printf("reader: number of chunks to send = %d\n", iteration);
         //send signal for the senderUDP
         senderSignaller();
 
