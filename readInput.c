@@ -13,7 +13,7 @@
 #include "threadCanceller.h"
 
 // Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 65506
+#define MAXBUFLEN 3 // 65506
 
 static List* list;
 static pthread_t readerThread;
@@ -58,6 +58,8 @@ static void* readLoop(void* useless){
             }
         } while (bufStorageOfMessage[numbytes-1]!='\n');
 
+printf("reader: number of input right now = %d\n",countMessages(list));
+printf("reader: number of chunks to send = %d\n", iteration);
         //send signal for the senderUDP
         senderSignaller();
 

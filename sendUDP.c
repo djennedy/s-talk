@@ -81,6 +81,7 @@ static void* senderLoop(void* unused)
         pthread_mutex_unlock(&sendAvailableCondMutex);
 
         int iteration = 0;
+        printf("sender: number of items to send = %d\n", countMessages(list));
 
         do
         {

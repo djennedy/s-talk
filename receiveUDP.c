@@ -20,7 +20,7 @@
 #include "threadCanceller.h"
 
 // Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 65506
+#define MAXBUFLEN 3 // 65506
 
 // Preparing variables we'll use
 static int sockfd;
@@ -133,7 +133,8 @@ static void* receiverLoop (void* unused)
             }
         } while (buf[numbytes-1]!='\n');
 
-
+printf("receiver: number of input right now = %d\n",countMessages(list));
+printf("receiver: number of chunks to write = %d\n", iteration);
         // Signals writer to write message to screen
         writerSignaller();
     }

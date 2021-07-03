@@ -11,7 +11,7 @@
 #include "writeOutput.h"
 
 // Max size of the message, using theoretical max length for a UDP packet
-#define MAXBUFLEN 65506
+#define MAXBUFLEN 3 // 65506
 
 static pthread_t writerThread;
 static pthread_mutex_t writeAvailableCondMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -31,6 +31,8 @@ static void* writeLoop(void* useless){
         pthread_mutex_unlock(&writeAvailableCondMutex);
         
         int iteration = 0;
+
+printf("writer: number of items to write = %d\n", countMessages(list));
 
         do
         {
