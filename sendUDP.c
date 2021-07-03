@@ -112,7 +112,10 @@ static void* senderLoop(void* unused)
                 perror("sender: sendto error");
                 exit(-1);
             }
-        } while (countMessages(list)!=0);  
+        } while (countMessages(list)!=0);
+
+printf("sender: number of items in list after send = %d\n", countMessages(list));
+printf("sender: number of items sent=  %d\n", iteration);  
     }
     return NULL;
 }

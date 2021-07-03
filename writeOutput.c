@@ -59,6 +59,9 @@ printf("writer: number of items to write = %d\n", countMessages(list));
             free(message);
             message = NULL;
         } while (countMessages(list)!=0);
+
+printf("writer: number of items in list after write = %d\n", countMessages(list));
+printf("writer: number of items written =  %d\n", iteration);
     }
     return NULL;
     
